@@ -35,7 +35,6 @@ type ImagePredictor struct {
 // New ...
 func New(model dlframework.ModelManifest, opts ...options.Option) (common.Predictor, error) {
 
-	pp.Println("dsfdsdsdfsd")
 	modelInputs := model.GetInputs()
 	if len(modelInputs) != 1 {
 		return nil, errors.New("number of inputs not supported")
@@ -48,7 +47,6 @@ func New(model dlframework.ModelManifest, opts ...options.Option) (common.Predic
 
 	predictor := new(ImagePredictor)
 
-	pp.Println("New")
 	return predictor.Load(context.Background(), model, opts...)
 }
 
@@ -57,7 +55,6 @@ func (p *ImagePredictor) Load(ctx context.Context, model dlframework.ModelManife
 	span, ctx := tracer.StartSpanFromContext(ctx, tracer.STEP_TRACE, "Load")
 	defer span.Finish()
 
-	pp.Println("Load")
 	framework, err := model.ResolveFramework()
 	if err != nil {
 		return nil, err
@@ -83,12 +80,10 @@ func (p *ImagePredictor) Load(ctx context.Context, model dlframework.ModelManife
 		},
 	}
 
-	pp.Println("down")
 	if err = ip.download(ctx); err != nil {
 		return nil, err
 	}
 
-	pp.Println("dsd")
 	if err = ip.loadPredictor(ctx); err != nil {
 		return nil, err
 	}
@@ -153,7 +148,6 @@ func (p *ImagePredictor) download(ctx context.Context) error {
 		return errors.New("Need graph file checksum in the model manifest")
 	}
 
-	log.Info("downloading....")
 	span.LogFields(
 		olog.String("event", "download graph"),
 	)
@@ -256,9 +250,15 @@ func (p *ImagePredictor) Predict(ctx context.Context, data [][]float32, opts ...
 		input = append(input, v...)
 	}
 
+	dims, err := p.GetImageDimensions()
+	if err != nil {
+		return nil, err
+	}
+
 	predictions, err := p.predictor.Predict(
 		input,
 		p.GetOutputLayerName(DefaultOutputLayerName),
+		dims,
 	)
 	if err != nil {
 		return nil, err
