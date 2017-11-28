@@ -1,0 +1,31 @@
+settings:
+  legacy:
+    force: false
+    interval: 100ms
+server:
+  status: false
+  open: false
+  host: localhost
+  port: 5001
+schema:
+- name: cntk-agent
+  path: .
+  commands:
+    build:
+      status: true
+    run: true
+  watcher:
+    preview: true
+    paths:
+    - ..
+    - ../../go-cntk
+    - ../../dlframework
+    extensions:
+    - go
+    ignored_paths:
+    - ../.git
+    - ../../go-cntk/.git
+    - .realize
+    - ../vendor
+    - ../../dlframework/vendor
+    - ../../dlframework/.git
