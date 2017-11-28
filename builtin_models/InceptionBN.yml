@@ -1,4 +1,4 @@
-name: Inception-ResNet # name of your model
+name: InceptionBN # name of your model
 framework:
   name: CNTK # framework for the model
   version: 2.3 # framework version contraint
@@ -14,9 +14,9 @@ container: # containers used to perform model prediction
 description: >
   TODO
 references: # references to papers / websites / etc.. describing the model
-  - https://github.com/soeaver/cntk-model/tree/master/cls
-  - https://arxiv.org/abs/1602.07261
-  - https://github.com/tensorflow/models/blob/master/research/slim/preprocessing/inception_preprocessing.py
+  - https://github.com/pertusa/InceptionBN-21K-for-CNTK
+  - https://github.com/BVLC/caffe/wiki/Model-Zoo
+  - https://github.com/dmlc/mxnet-model-gallery/blob/master/imagenet-21k-inception.md
 # license of the model
 license: unrestricted
 # inputs to the model
@@ -26,9 +26,8 @@ inputs:
     # description of the first input
     description: the input image
     parameters: # type parameters
-      dimensions: [3, 299, 299]
-      mean: [128, 128, 128]
-      scale: 128
+      dimensions: [3, 224, 224]
+      mean: [117, 117, 117]
 output:
   # the type of the output
   type: feature
@@ -36,16 +35,14 @@ output:
   description: the output label
   parameters:
     # type parameters
-    features_url: http://s3.amazonaws.com/store.carml.org/synsets/imagenet/synset.txt
-    features_checksum: 4d234b5833aca44928065a180db3016a
+    features_url: http://s3.amazonaws.com/store.carml.org/synsets/imagenet/synset-21k.txt
+    features_checksum: 851bbe06499cf53fa6f8fb72ad61e906
 model: # specifies model graph and weights resources
-  graph_path: http://s3.amazonaws.com/store.carml.org/models/caffe/inception-resnet-v2/deploy_inception-resnet-v2.prototxt
-  weights_path: http://s3.amazonaws.com/store.carml.org/models/caffe/inception-resnet-v2/inception-resnet-v2.caffemodel
+  graph_path: https://s3.amazonaws.com/store.carml.org/models/cntk/BNInception_ImageNet_Caffe.model
   is_archive: false # if set, then the base_url is a url to an archive
                     # the graph_path and weights_path then denote the
                     # file names of the graph and weights within the archive
-  graph_checksum: f4bfcf57b19470532cc3b244aec735e3
-  weights_checksum: 6cda7beca27bb0c9e981ce21d5f27b18
+  graph_checksum: 18627a528ec1d2e649d2a38975ae4e4c
 attributes: # extra network attributes
   kind: CNN # the kind of neural network (CNN, RNN, ...)
   training_dataset: ImageNet # dataset used to for training

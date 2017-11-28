@@ -1,4 +1,4 @@
-name: VGG16_SOD # name of your model
+name: ResNet18 # name of your model
 framework:
   name: CNTK # framework for the model
   version: 2.3 # framework version contraint
@@ -12,17 +12,16 @@ container: # containers used to perform model prediction
     cpu: raiproject/carml-cntk:ppc64le-gpu
     gpu: raiproject/carml-cntk:ppc64le-gpu
 description: >
-  The following model are finetuned on the Salient Object Subitizing dataset (~5000 images) with bounding box annotations.
-  CNN models for the following CVPR'16 paper- Unconstrained Salient Object Detection via Proposal Subset Optimization
-  J. Zhang, S. Sclaroff, Z. Lin, X. Shen, B. Price and R. Mech. CVPR, 2016.
+  A Residual learning framework to ease the training of networks that are substantially deeper than those used previously.
+  We explicitly reformulate the layers as learning residual functions with reference to the layer inputs, instead of learning unreferenced functions.
+  We provide comprehensive empirical evidence showing that these residual networks are easier to optimize, and can gain accuracy from considerably increased depth.
+  On the ImageNet dataset we evaluate residual nets with a depth of up to 152 layers---8x deeper than VGG nets but still having lower complexity.
+  An ensemble of these residual nets achieves 3.57% error on the ImageNet test set. This result won the 1st place on the ILSVRC 2015 classification task.
 references: # references to papers / websites / etc.. describing the model
-  - https://gist.github.com/jimmie33/509111f8a00a9ece2c3d5dde6a750129
-  - https://github.com/jimmie33/SOD
-  - https://github.com/BVLC/caffe/wiki/Model-Zoo
-  - http://cs-people.bu.edu/jmzhang/sod.html
-  - https://arxiv.org/abs/1409.1556
+  - https://github.com/KaimingHe/deep-residual-networks
+  - https://arxiv.org/abs/1512.03385
 # license of the model
-license: MIT
+license: unrestricted
 # inputs to the model
 inputs:
   # first input type for the model
@@ -39,17 +38,15 @@ output:
   description: the output label
   parameters:
     # type parameters
-    features_url: http://s3.amazonaws.com/store.carml.org/models/caffe/vgg16_sod/center100.txt
-    features_checksum: 6ea7d1bd9a24ba3bcde6c067dbd6185f
+    features_url: http://s3.amazonaws.com/store.carml.org/synsets/imagenet/synset.txt
+    features_checksum: 4d234b5833aca44928065a180db3016a
 model: # specifies model graph and weights resources
-  graph_path: http://s3.amazonaws.com/store.carml.org/models/caffe/vgg16_sod/deploy.prototxt
-  weights_path: http://s3.amazonaws.com/store.carml.org/models/caffe/vgg16_sod/VGG16_SOD_finetune.caffemodel
+  graph_path: https://s3.amazonaws.com/store.carml.org/models/cntk/ResNet18_ImageNet_CNTK.model
   is_archive: false # if set, then the base_url is a url to an archive
                     # the graph_path and weights_path then denote the
                     # file names of the graph and weights within the archive
-  graph_checksum: eac6d2978cff65319c7ef34aa89d760c
-  weights_checksum: 9a7dce6fc980c29d962f7c2758b2761d
+  graph_checksum: e6fc1132eb3124f61ba2d208430b3e84
 attributes: # extra network attributes
   kind: CNN # the kind of neural network (CNN, RNN, ...)
-  training_dataset: The MSO dataset # dataset used to for training
+  training_dataset: ImageNet # dataset used to for training
   manifest_author: abduld

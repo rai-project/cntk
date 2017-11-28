@@ -41,13 +41,11 @@ output:
     features_url: http://s3.amazonaws.com/store.carml.org/synsets/imagenet/synset.txt
     features_checksum: 4d234b5833aca44928065a180db3016a
 model: # specifies model graph and weights resources
-  graph_path: http://s3.amazonaws.com/store.carml.org/models/caffe/resnet50/ResNet-50-deploy.prototxt
-  weights_path: http://s3.amazonaws.com/store.carml.org/models/caffe/resnet50/ResNet-50-model.caffemodel
+  graph_path: https://s3.amazonaws.com/store.carml.org/models/cntk/ResNet50_ImageNet_Caffe.model
   is_archive: false # if set, then the base_url is a url to an archive
                     # the graph_path and weights_path then denote the
                     # file names of the graph and weights within the archive
-  graph_checksum: 4ba3f945e7b86b07648e4f4351de0699
-  weights_checksum: 44b20660c5948391734036963e855dd2
+  graph_checksum: e722f2999e1e5b7a5b1b1683a23b6aeb
 attributes: # extra network attributes
   kind: CNN # the kind of neural network (CNN, RNN, ...)
   training_dataset: ImageNet # dataset used to for training
