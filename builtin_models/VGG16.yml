@@ -15,7 +15,7 @@ description: >
   The model is an improved version of the 16-layer model used by the VGG team in the ILSVRC-2014 competition.
 references: # references to papers / websites / etc.. describing the model
   - https://gist.github.com/ksimonyan/211839e770f7b538e2d8
-  - https://github.com/BVLC/caffe/wiki/Model-Zoo#models-used-by-the-vgg-team-in-ilsvrc-2014
+  - https://github.com/BVLC/Tensorflow/wiki/Model-Zoo#models-used-by-the-vgg-team-in-ilsvrc-2014
   - https://arxiv.org/abs/1409.1556
 # license of the model
 license: CC BY 4.0 (commercial use is allowed)
@@ -38,11 +38,12 @@ output:
     features_url: http://data.dmlc.ml/mxnet/models/imagenet/synset.txt
     features_checksum: 4d234b5833aca44928065a180db3016a
 model: # specifies model graph and weights resources
-  graph_path: https://s3.amazonaws.com/store.carml.org/models/cntk/VGG16_ImageNet_Caffe.model
+  base_url: https://s3.amazonaws.com/store.carml.org/models/cntk/models/
+  graph_path: vgg16_1.0/vgg16.dnn
   is_archive: false # if set, then the base_url is a url to an archive
                     # the graph_path and weights_path then denote the
                     # file names of the graph and weights within the archive
-  graph_checksum: e6fc1132eb3124f61ba2d208430b3e84
+  graph_checksum: bfac004627fa389d257e1f73d896fb25
 attributes: # extra network attributes
   kind: CNN # the kind of neural network (CNN, RNN, ...)
   training_dataset: ImageNet # dataset used to for training

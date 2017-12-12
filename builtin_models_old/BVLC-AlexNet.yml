@@ -1,4 +1,4 @@
-name: ResNet152 # name of your model
+name: BVLC-AlexNet # name of your model
 framework:
   name: CNTK # framework for the model
   version: 2.3 # framework version contraint
@@ -12,14 +12,20 @@ container: # containers used to perform model prediction
     cpu: raiproject/carml-cntk:ppc64le-gpu
     gpu: raiproject/carml-cntk:ppc64le-gpu
 description: >
-  A Residual learning framework to ease the training of networks that are substantially deeper than those used previously.
-  We explicitly reformulate the layers as learning residual functions with reference to the layer inputs, instead of learning unreferenced functions.
-  We provide comprehensive empirical evidence showing that these residual networks are easier to optimize, and can gain accuracy from considerably increased depth.
-  On the ImageNet dataset we evaluate residual nets with a depth of up to 152 layers---8x deeper than VGG nets but still having lower complexity.
-  An ensemble of these residual nets achieves 3.57% error on the ImageNet test set. This result won the 1st place on the ILSVRC 2015 classification task.
+  This model is a replication of the model described in the AlexNet publication.
+  Differences: not training with the relighting data-augmentation;
+  initializing non-zero biases to 0.1 instead of 1 (found necessary for training, as initialization to 1 gave flat loss).
+  The bundled model is the iteration 360,000 snapshot. The best validation
+  performance during training was iteration 358,000 with validation accuracy
+  57.258% and loss 1.83948. This model obtains a top-1 accuracy 57.1% and a
+  top-5 accuracy 80.2% on the validation set, using just the center crop.
+  (Using the average of 10 crops, (4 + 1 center) * 2 mirror, should obtain
+  a bit higher accuracy.)
+  This model was trained by Evan Shelhamer @shelhamer
 references: # references to papers / websites / etc.. describing the model
-  - https://github.com/KaimingHe/deep-residual-networks
-  - https://arxiv.org/abs/1512.03385
+  - https://github.com/BVLC/caffe/tree/master/models/bvlc_alexnet
+  - https://github.com/BVLC/caffe/wiki/Models-accuracy-on-ImageNet-2012-val
+  - http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf
 # license of the model
 license: unrestricted
 # inputs to the model
@@ -29,8 +35,8 @@ inputs:
     # description of the first input
     description: the input image
     parameters: # type parameters
-      dimensions: [3, 224, 224]
-      mean: [123.68, 116.779, 103.939]
+      dimensions: [3, 227, 227]
+      mean: [123, 117, 104]
 output:
   # the type of the output
   type: feature
@@ -38,15 +44,14 @@ output:
   description: the output label
   parameters:
     # type parameters
-    features_url: http://s3.amazonaws.com/store.carml.org/synsets/imagenet/synset.txt
+    features_url: http://data.dmlc.ml/mxnet/models/imagenet/synset.txt
     features_checksum: 4d234b5833aca44928065a180db3016a
 model: # specifies model graph and weights resources
-  base_url: https://s3.amazonaws.com/store.carml.org/models/cntk/models/
-  graph_path: resnet152_1.0/Resnet152.dnn
+  graph_path: https://s3.amazonaws.com/store.carml.org/models/cntk/AlexNet_ImageNet_Caffe.model
   is_archive: false # if set, then the base_url is a url to an archive
                     # the graph_path and weights_path then denote the
                     # file names of the graph and weights within the archive
-  graph_checksum: de5e053e35a9b55d06bdee66652f6da1
+  graph_checksum: 8b26eea6e1317c3e66c8050302c512a0
 attributes: # extra network attributes
   kind: CNN # the kind of neural network (CNN, RNN, ...)
   training_dataset: ImageNet # dataset used to for training

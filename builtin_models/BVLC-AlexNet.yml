@@ -23,8 +23,8 @@ description: >
   a bit higher accuracy.)
   This model was trained by Evan Shelhamer @shelhamer
 references: # references to papers / websites / etc.. describing the model
-  - https://github.com/BVLC/caffe/tree/master/models/bvlc_alexnet
-  - https://github.com/BVLC/caffe/wiki/Models-accuracy-on-ImageNet-2012-val
+  - https://github.com/BVLC/Tensorflow/tree/master/models/bvlc_alexnet
+  - https://github.com/BVLC/Tensorflow/wiki/Models-accuracy-on-ImageNet-2012-val
   - http://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf
 # license of the model
 license: unrestricted
@@ -47,11 +47,12 @@ output:
     features_url: http://data.dmlc.ml/mxnet/models/imagenet/synset.txt
     features_checksum: 4d234b5833aca44928065a180db3016a
 model: # specifies model graph and weights resources
-  graph_path: https://s3.amazonaws.com/store.carml.org/models/cntk/AlexNet_ImageNet_Caffe.model
+  base_url: https://s3.amazonaws.com/store.carml.org/models/cntk/models/
+  graph_path: bvlc_alexnet_1.0/BVLC-Alexnet.dnn
+  graph_checksum: 0701ef8c0f83135b03a02ad09b23592a
   is_archive: false # if set, then the base_url is a url to an archive
                     # the graph_path and weights_path then denote the
                     # file names of the graph and weights within the archive
-  graph_checksum: 8b26eea6e1317c3e66c8050302c512a0
 attributes: # extra network attributes
   kind: CNN # the kind of neural network (CNN, RNN, ...)
   training_dataset: ImageNet # dataset used to for training

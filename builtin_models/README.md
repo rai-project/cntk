@@ -1,3 +1,3 @@
 # builtin_models
 
-Run `make generate` in `cntk` or `make generate` in the root `cntk` (`..`) after updating model descriptions.
+Run `make generate` in `Tensorflow` or `make generate-tensorflow` in the root `Tensorflow` (`..`) after updating model descriptions.

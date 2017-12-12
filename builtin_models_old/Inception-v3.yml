@@ -1,8 +1,8 @@
-name: ResNet152 # name of your model
+name: Inception # name of your model
 framework:
   name: CNTK # framework for the model
   version: 2.3 # framework version contraint
-version: 1.0 # version information in semantic version format
+version: 3.0 # version information in semantic version format
 container: # containers used to perform model prediction
            # multiple platforms can be specified
   amd64:
@@ -12,14 +12,12 @@ container: # containers used to perform model prediction
     cpu: raiproject/carml-cntk:ppc64le-gpu
     gpu: raiproject/carml-cntk:ppc64le-gpu
 description: >
-  A Residual learning framework to ease the training of networks that are substantially deeper than those used previously.
-  We explicitly reformulate the layers as learning residual functions with reference to the layer inputs, instead of learning unreferenced functions.
-  We provide comprehensive empirical evidence showing that these residual networks are easier to optimize, and can gain accuracy from considerably increased depth.
-  On the ImageNet dataset we evaluate residual nets with a depth of up to 152 layers---8x deeper than VGG nets but still having lower complexity.
-  An ensemble of these residual nets achieves 3.57% error on the ImageNet test set. This result won the 1st place on the ILSVRC 2015 classification task.
+  Inception-v3 is trained for the ImageNet Large Visual Recognition Challenge using the data from 2012.
+  This is a standard task in computer vision, where models try to classify entire images into 1000 classes, like "Zebra", "Dalmatian", and "Dishwasher".
 references: # references to papers / websites / etc.. describing the model
-  - https://github.com/KaimingHe/deep-residual-networks
-  - https://arxiv.org/abs/1512.03385
+  - https://github.com/soeaver/cntk-model/tree/master/cls
+  - https://github.com/dmlc/mxnet-model-gallery/blob/master/imagenet-1k-inception-v3.md
+  - https://github.com/tensorflow/models/blob/master/research/slim/preprocessing/inception_preprocessing.py
 # license of the model
 license: unrestricted
 # inputs to the model
@@ -29,8 +27,9 @@ inputs:
     # description of the first input
     description: the input image
     parameters: # type parameters
-      dimensions: [3, 224, 224]
-      mean: [123.68, 116.779, 103.939]
+      dimensions: [3, 299, 299]
+      mean: [128, 128, 128]
+      scale: 128
 output:
   # the type of the output
   type: feature
@@ -38,15 +37,14 @@ output:
   description: the output label
   parameters:
     # type parameters
-    features_url: http://s3.amazonaws.com/store.carml.org/synsets/imagenet/synset.txt
-    features_checksum: 4d234b5833aca44928065a180db3016a
+    features_url: http://s3.amazonaws.com/store.carml.org/synsets/imagenet/synset1000.txt
+    features_checksum: 7315c2c8bffdb680cf8c5d2a7c45c363
 model: # specifies model graph and weights resources
-  base_url: https://s3.amazonaws.com/store.carml.org/models/cntk/models/
-  graph_path: resnet152_1.0/Resnet152.dnn
+  graph_path: https://s3.amazonaws.com/store.carml.org/models/cntk/InceptionV3_ImageNet_CNTK.model
   is_archive: false # if set, then the base_url is a url to an archive
                     # the graph_path and weights_path then denote the
                     # file names of the graph and weights within the archive
-  graph_checksum: de5e053e35a9b55d06bdee66652f6da1
+  graph_checksum: 3df2ab53a65354616ffc32198cf9035f
 attributes: # extra network attributes
   kind: CNN # the kind of neural network (CNN, RNN, ...)
   training_dataset: ImageNet # dataset used to for training
