@@ -114,7 +114,7 @@ func (p *ImagePredictor) GetPreprocessOptions(ctx context.Context) (common.Prepr
 		Scale:     scale,
 		Size:      []int{int(imageDims[1]), int(imageDims[2])},
 		ColorMode: types.BGRMode,
-		Layout:    image.CHWLayout,
+		Layout:    image.HWCLayout,
 	}, nil
 }
 
