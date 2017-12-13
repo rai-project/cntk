@@ -1,4 +1,4 @@
-name: VGG16_SOS # name of your model
+name: VGG16_SOD # name of your model
 framework:
   name: CNTK # framework for the model
   version: 2.3 # framework version contraint
@@ -12,14 +12,17 @@ container: # containers used to perform model prediction
     cpu: raiproject/carml-cntk:ppc64le-gpu
     gpu: raiproject/carml-cntk:ppc64le-gpu
 description: >
-  VGG16 finetuned on the Salient Object Subitizing (SOS) dataset, which is described in the CVPR'15 paper: "Salient Object Subitizing"
+  The following model are finetuned on the Salient Object Subitizing dataset (~5000 images) with bounding box annotations.
+  CNN models for the following CVPR'16 paper- Unconstrained Salient Object Detection via Proposal Subset Optimization
+  J. Zhang, S. Sclaroff, Z. Lin, X. Shen, B. Price and R. Mech. CVPR, 2016.
 references: # references to papers / websites / etc.. describing the model
-  - https://gist.github.com/jimmie33/27c1c0a7736ba66c2395
-  - http://cs-people.bu.edu/jmzhang/sos.html
+  - https://gist.github.com/jimmie33/509111f8a00a9ece2c3d5dde6a750129
+  - https://github.com/jimmie33/SOD
   - https://github.com/BVLC/Caffe/wiki/Model-Zoo
+  - http://cs-people.bu.edu/jmzhang/sod.html
   - https://arxiv.org/abs/1409.1556
 # license of the model
-license: CC BY-NC 4.0
+license: MIT
 # inputs to the model
 inputs:
   # first input type for the model
@@ -38,16 +41,16 @@ output:
   parameters:
     # type parameters
     layer_name: "prob"
-    features_url: http://s3.amazonaws.com/store.carml.org/models/caffe/vgg16_sos/%20salient_object_subitizing.txt
-    features_checksum: da8e6ab825a44a900f1654f09f51d71f
+    features_url: http://s3.amazonaws.com/store.carml.org/models/caffe/vgg16_sod/center100.txt
+    features_checksum: 6ea7d1bd9a24ba3bcde6c067dbd6185f
 model: # specifies model graph and weights resources
   base_url: https://s3.amazonaws.com/store.carml.org/models/cntk/models/
-  graph_path: vgg16_sos_1.0/vgg16_sos.dnn
+  graph_path: vgg16_sod_1.0/vgg16_sod.dnn
   is_archive: false # if set, then the base_url is a url to an archive
                     # the graph_path and weights_path then denote the
                     # file names of the graph and weights within the archive
-  graph_checksum: 92a25a94a3c7c62a5e07a972585f6cff
+  graph_checksum: 9773290b583835c6fe79019976ad4498
 attributes: # extra network attributes
   kind: CNN # the kind of neural network (CNN, RNN, ...)
-  training_dataset: The SOS Dataset # dataset used to for training
+  training_dataset: The MSO dataset # dataset used to for training
   manifest_author: abduld

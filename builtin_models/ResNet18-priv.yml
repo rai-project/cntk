@@ -56,5 +56,5 @@ attributes: # extra network attributes
   training_dataset: ImageNet # dataset used to for training
   manifest_author: abduld
 # hidden: true # Message type "Tensorflow.PoolingParameter" has no field named "ceil_mode"
-# https://github.com/BVLC/Tensorflow/pull/3057/files
+# https://github.com/BVLC/Caffe/pull/3057/files
 
