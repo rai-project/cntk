@@ -34,7 +34,6 @@ type ImagePredictor struct {
 
 // New ...
 func New(model dlframework.ModelManifest, opts ...options.Option) (common.Predictor, error) {
-
 	modelInputs := model.GetInputs()
 	if len(modelInputs) != 1 {
 		return nil, errors.New("number of inputs not supported")
@@ -113,8 +112,8 @@ func (p *ImagePredictor) GetPreprocessOptions(ctx context.Context) (common.Prepr
 		MeanImage: mean,
 		Scale:     scale,
 		Size:      []int{int(imageDims[1]), int(imageDims[2])},
-		ColorMode: types.BGRMode,
-		Layout:    image.HWCLayout,
+		ColorMode: p.GetColorMode(types.RGBMode),
+		Layout:    p.GetLayout(image.HWCLayout),
 	}, nil
 }
 
