@@ -42,7 +42,6 @@ output:
     features_url: http://s3.amazonaws.com/store.carml.org/synsets/imagenet/synset1000.txt
     features_checksum: 7315c2c8bffdb680cf8c5d2a7c45c363
 model: # specifies model graph and weights resources
-  layer_name: "prob"
   base_url: https://s3.amazonaws.com/store.carml.org/models/cntk/models/
   graph_path: inception_3.0/inception.dnn
   is_archive: false # if set, then the base_url is a url to an archive
