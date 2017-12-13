@@ -42,12 +42,13 @@ output:
     features_url: http://s3.amazonaws.com/store.carml.org/synsets/imagenet/synset1000.txt
     features_checksum: 7315c2c8bffdb680cf8c5d2a7c45c363
 model: # specifies model graph and weights resources
-  layer_name: "Block94001_Output_0"
-  graph_path: https://s3.amazonaws.com/store.carml.org/models/cntk/InceptionV3_ImageNet_CNTK.model
+  layer_name: "prob"
+  base_url: https://s3.amazonaws.com/store.carml.org/models/cntk/models/
+  graph_path: inception_3.0/inception.dnn
   is_archive: false # if set, then the base_url is a url to an archive
                     # the graph_path and weights_path then denote the
                     # file names of the graph and weights within the archive
-  graph_checksum: 3df2ab53a65354616ffc32198cf9035f
+  graph_checksum: c2f3c624fb06bdd1e6752012e2d7f19c
 attributes: # extra network attributes
   kind: CNN # the kind of neural network (CNN, RNN, ...)
   training_dataset: ImageNet # dataset used to for training
