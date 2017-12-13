@@ -112,7 +112,7 @@ func (p *ImagePredictor) GetPreprocessOptions(ctx context.Context) (common.Prepr
 		MeanImage: mean,
 		Scale:     scale,
 		Size:      []int{int(imageDims[1]), int(imageDims[2])},
-		ColorMode: p.GetColorMode(types.RGBMode),
+		ColorMode: p.GetColorMode(types.BGRMode),
 		Layout:    p.GetLayout(image.HWCLayout),
 	}, nil
 }
