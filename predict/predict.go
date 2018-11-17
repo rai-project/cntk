@@ -35,6 +35,10 @@ type ImagePredictor struct {
 
 // New ...
 func New(model dlframework.ModelManifest, opts ...options.Option) (common.Predictor, error) {
+	ctx := context.Background()
+	span, ctx := tracer.StartSpanFromContext(ctx, tracer.APPLICATION_TRACE, "new_predictor")
+	defer span.Finish()
+
 	modelInputs := model.GetInputs()
 	if len(modelInputs) != 1 {
 		return nil, errors.New("number of inputs not supported")
@@ -52,9 +56,6 @@ func New(model dlframework.ModelManifest, opts ...options.Option) (common.Predic
 
 // Download ...
 func (p *ImagePredictor) Download(ctx context.Context, model dlframework.ModelManifest, opts ...options.Option) error {
-	span, ctx := tracer.StartSpanFromContext(ctx, tracer.STEP_TRACE, "Download")
-	defer span.Finish()
-
 	framework, err := model.ResolveFramework()
 	if err != nil {
 		return err
@@ -85,9 +86,6 @@ func (p *ImagePredictor) Download(ctx context.Context, model dlframework.ModelMa
 
 // Load ...
 func (p *ImagePredictor) Load(ctx context.Context, model dlframework.ModelManifest, opts ...options.Option) (common.Predictor, error) {
-	span, ctx := tracer.StartSpanFromContext(ctx, tracer.STEP_TRACE, "Load")
-	defer span.Finish()
-
 	framework, err := model.ResolveFramework()
 	if err != nil {
 		return nil, err
@@ -154,7 +152,7 @@ func (p *ImagePredictor) GetPreprocessOptions(ctx context.Context) (common.Prepr
 func (p *ImagePredictor) download(ctx context.Context) error {
 	span, ctx := tracer.StartSpanFromContext(ctx,
 		tracer.STEP_TRACE,
-		"Download",
+		"download",
 		opentracing.Tags{
 			"graph_url":           p.GetGraphUrl(),
 			"target_graph_file":   p.GetGraphPath(),
@@ -204,8 +202,7 @@ func (p *ImagePredictor) download(ctx context.Context) error {
 }
 
 func (p *ImagePredictor) loadPredictor(ctx context.Context) error {
-	span, ctx := tracer.StartSpanFromContext(ctx, tracer.STEP_TRACE, "LoadPredictor")
-
+	span, ctx := tracer.StartSpanFromContext(ctx, tracer.APPLICATION_TRACE, "load_predictor")
 	defer span.Finish()
 
 	span.LogFields(
@@ -252,7 +249,7 @@ func (p *ImagePredictor) loadPredictor(ctx context.Context) error {
 }
 
 // Predict ...
-func (p *ImagePredictor) Predict(ctx context.Context, data [][]float32, opts ...options.Option) ([]dlframework.Features, error) {
+func (p *ImagePredictor) Predict(ctx context.Context, data [][]float32, opts ...options.Option) error {
 	if EnableFrameworkProfile && p.TraceLevel() >= tracer.FRAMEWORK_TRACE {
 		err := p.predictor.StartProfiling("cntk", "predict")
 		if err != nil {
@@ -288,7 +285,7 @@ func (p *ImagePredictor) Predict(ctx context.Context, data [][]float32, opts ...
 		return nil, err
 	}
 
-	predictions, err := p.predictor.Predict(
+	err := p.predictor.Predict(
 		input,
 		p.GetOutputLayerName(DefaultOutputLayerName),
 		dims,
@@ -297,28 +294,20 @@ func (p *ImagePredictor) Predict(ctx context.Context, data [][]float32, opts ...
 		return nil, err
 	}
 
-	var output []dlframework.Features
-	batchSize := int(p.BatchSize())
-	length := len(predictions) / batchSize
-
-	for i := 0; i < batchSize; i++ {
-		rprobs := make([]*dlframework.Feature, length)
-		for j := 0; j < length; j++ {
-			rprobs[j] = &dlframework.Feature{
-				Index:       int64(j),
-				Name:        p.features[j],
-				Probability: predictions[i*length+j].Probability,
-			}
-		}
-		output = append(output, rprobs)
-	}
-	return output, nil
+	return nil
 }
 
-// Reset ...
-func (p *ImagePredictor) Reset(ctx context.Context) error {
+// ReadPredictedFeatures ...
+func (p *ImagePredictor) ReadPredictedFeatures(ctx context.Context) ([]dlframework.Features, error) {
+	span, ctx := tracer.StartSpanFromContext(ctx, tracer.APPLICATION_TRACE, "read_predicted_features")
+	defer span.Finish()
 
-	return nil
+	output, err := p.predictor.ReadPredictionOutput(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return p.CreatePredictedFeatures(ctx, output, p.labels)
 }
 
 // Close ...
