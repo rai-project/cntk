@@ -28,9 +28,9 @@ import (
 // ImagePredictor ...
 type ImagePredictor struct {
 	common.ImagePredictor
-	features  []string
+	labels    []string
 	predictor *gocntk.Predictor
-	inputDims []uint32
+	inputDims []int
 }
 
 // New ...
@@ -71,9 +71,9 @@ func (p *ImagePredictor) Download(ctx context.Context, model dlframework.ModelMa
 			Base: common.Base{
 				Framework: framework,
 				Model:     model,
+				WorkDir:   workDir,
 				Options:   options.New(opts...),
 			},
-			WorkDir: workDir,
 		},
 	}
 
@@ -105,9 +105,9 @@ func (p *ImagePredictor) Load(ctx context.Context, model dlframework.ModelManife
 			Base: common.Base{
 				Framework: framework,
 				Model:     model,
+				WorkDir:   workDir,
 				Options:   options.New(opts...),
 			},
-			WorkDir: workDir,
 		},
 	}
 
@@ -151,7 +151,7 @@ func (p *ImagePredictor) GetPreprocessOptions(ctx context.Context) (common.Prepr
 
 func (p *ImagePredictor) download(ctx context.Context) error {
 	span, ctx := tracer.StartSpanFromContext(ctx,
-		tracer.STEP_TRACE,
+		tracer.APPLICATION_TRACE,
 		"download",
 		opentracing.Tags{
 			"graph_url":           p.GetGraphUrl(),
@@ -209,7 +209,7 @@ func (p *ImagePredictor) loadPredictor(ctx context.Context) error {
 		olog.String("event", "read features"),
 	)
 
-	var features []string
+	var labels []string
 	f, err := os.Open(p.GetFeaturesPath())
 	if err != nil {
 		return errors.Wrapf(err, "cannot read %s", p.GetFeaturesPath())
@@ -218,9 +218,9 @@ func (p *ImagePredictor) loadPredictor(ctx context.Context) error {
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
 		line := scanner.Text()
-		features = append(features, line)
+		labels = append(labels, line)
 	}
-	p.features = features
+	p.labels = labels
 
 	p.inputDims, err = p.GetImageDimensions()
 	if err != nil {
@@ -237,6 +237,7 @@ func (p *ImagePredictor) loadPredictor(ctx context.Context) error {
 	}
 
 	pred, err := gocntk.New(
+		ctx,
 		options.WithOptions(opts),
 		options.Graph([]byte(p.GetGraphPath())),
 	)
@@ -268,7 +269,7 @@ func (p *ImagePredictor) Predict(ctx context.Context, data [][]float32, opts ...
 					log.WithError(err).WithField("json", profBuffer).Error("failed to create ctimer")
 					return
 				}
-				t.Publish(ctx)
+				t.Publish(ctx, tracer.FRAMEWORK_TRACE)
 
 				p.predictor.DisableProfiling()
 			}()
@@ -282,16 +283,17 @@ func (p *ImagePredictor) Predict(ctx context.Context, data [][]float32, opts ...
 
 	dims, err := p.GetImageDimensions()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	err := p.predictor.Predict(
+	err = p.predictor.Predict(
+		ctx,
 		input,
 		p.GetOutputLayerName(DefaultOutputLayerName),
 		dims,
 	)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	return nil
